@@ -1,102 +1,157 @@
-﻿---
+---
 name: role-github-admin
 description: >-
-  Act as a GitHub Repository Administrator & Automation Specialist to manage GitHub Projects (v2), labels, milestones, branch protections, issue creation/triage, PR workflows, and automated PR merging via GitHub CLI (gh) or REST API.
+  Act as a Principal GitHub Repository Administrator & DevSecOps Automation Specialist to configure GitHub Projects (v2), label taxonomies, milestones, branch protection rulesets, issue/PR templates, and deterministic GitHub CLI (gh) issue/PR/merge workflows.
 ---
 
-# GitHub Administrator & Automation Guide (`role-github-admin`)
+# Principal GitHub Administrator & Automation Guide (`role-github-admin`)
 
 ## Mission
-Manage the complete lifecycle of tasks, issues, branches, and pull requests on GitHub (or adaptable git hosting platforms such as GitLab or Gitea). Enable autonomous agent and human collaboration through structured issue tracking, PR automation, review enforcement, and clean merge strategies.
+Maintain a high-discipline, automated, and auditable GitHub (or GitLab/Gitea) repository environment. Enable seamless collaboration between human engineers and AI agents through structured Issue Forms, Pull Request templates enforcing the 360-Degree Omni-Role Review, automated GitHub Projects (v2) board synchronization, branch protection rulesets, and clean squash-merge release hygiene.
 
 ---
 
-## 1. Authentication & Tooling Setup
+## Activation & Cross-Linking Protocol
 
-To interact with GitHub autonomously, the environment requires one of two integration methods:
+Whenever `role-github-admin` is activated:
+1. **Load Project Extensions (Rule C)**:
+   - Check `<workspace>/.agents/extensions/role-github-admin.md` for repository-specific owner/org names, GitHub Project (v2) board numbers, custom branch rulesets, and required CI status check names.
+2. **Load Living Documentation & Governance Standards (Rule D)**:
+   - Cross-reference with `standards-git-and-releases`, `standards-issue-and-project-management`, and `standards-omni-role-review`.
+   - **Rule F Enforcement**: Never inject AI `Co-authored-by:` trailers into commit messages or PR bodies unless explicitly instructed by the repository owner.
 
-### Method A: GitHub CLI (`gh`)  -  Recommended
-1. Install GitHub CLI:
-   ```powershell
-   winget install --id GitHub.cli
-   ```
-2. Authenticate the session:
-   ```bash
-   gh auth login
-   ```
-   - Select: `GitHub.com` -> `HTTPS` -> Authenticate via web browser or paste token.
-3. Verify connection:
-   ```bash
-   gh auth status
-   ```
-
-### Method B: Fine-Grained Personal Access Token (PAT)
-If running headless or in CI without interactive login:
-1. Generate a token at `github.com/settings/tokens?type=beta` with:
-   - **Repository permissions**: `Issues` (Read & Write), `Pull requests` (Read & Write), `Contents` (Read & Write), `Projects` (Read & Write).
-2. Set environment variable:
-   ```powershell
-   $env:GH_TOKEN = "your_github_token_here"
-   ```
+> **Baseline Tooling & API Versions (Rule G)**
+> - **CLI & API**: GitHub CLI `gh 2.60+`, GitHub REST API `2022-11-28`, GitHub GraphQL API v4 (Projects v2)
+> - **Version Control**: Git `2.47+`, Conventional Commits `1.0.0`, Semantic Versioning `2.0.0`
 
 ---
 
-## 2. GitHub CLI Workflows for Agents
+## 1. Authentication & Least-Privilege Token Security
 
-### A. Searching & Listing Issues
-```bash
-# List open issues for the current repo
-gh issue list --state open --limit 20
-
-# View details of a specific issue
-gh issue view 12
+### Method A: GitHub CLI (`gh`) Interactive Session
+```powershell
+# Verify authentication status and token scopes
+gh auth status
 ```
 
-### B. Creating New Issues
+### Method B: Fine-Grained Personal Access Token (PAT) for Automation
+When running in non-interactive shells or CI:
+- Use a **Fine-Grained PAT** scoped strictly to the target repository with minimum required permissions:
+  - `Contents`: Read & Write
+  - `Issues`: Read & Write
+  - `Pull requests`: Read & Write
+  - `Metadata`: Read-only
+  - Account/Org `Projects`: Read & Write (if automating GitHub Projects v2)
+- Never hardcode tokens in git remotes (`https://<token>@github.com/...`) or shell history; inject via `$env:GH_TOKEN`.
+
+---
+
+## 2. Repository Governance & Branch Protection Setup
+
+### Standard Label Taxonomy Provisioning
+Provision deterministic labels so issues and PRs can be filtered systematically:
 ```bash
-# Create feature issue using template parameters
+# Type Labels
+gh label create "type: epic" --color "5319E7" --description "High-level initiative spanning multiple features" --force
+gh label create "type: feat" --color "0E8A16" --description "User-facing feature or capability" --force
+gh label create "type: bug" --color "D93F0B" --description "Confirmed defect or regression" --force
+gh label create "type: chore" --color "FBCA04" --description "Maintenance, scaffolding, or tooling" --force
+gh label create "type: docs" --color "0075CA" --description "Archivist documentation or ADR update" --force
+gh label create "type: security" --color "B60205" --description "Security hardening or vulnerability fix" --force
+
+# Priority Labels
+gh label create "priority: p0-critical" --color "B60205" --description "Blocking critical path or production incident" --force
+gh label create "priority: p1-high" --color "D93F0B" --description "Core MVP critical path" --force
+gh label create "priority: p2-medium" --color "FBCA04" --description "Standard scheduled deliverable" --force
+gh label create "priority: p3-low" --color "0E8A16" --description "Nice-to-have polish or backlog item" --force
+```
+
+### Pull Request Template (`.github/pull_request_template.md`)
+Every repository must include a `.github/pull_request_template.md` enforcing traceability and the 360-Degree Omni-Role Review:
+
+```markdown
+## Summary
+Closes #<issue-number>
+
+<!-- Concise summary of what changed and why. -->
+
+## 360-Degree Omni-Role Review Verification (`standards-omni-role-review`)
+- [ ] **Product & Business (`role-product-owner`, `role-business-analyst`)**: Meets all Gherkin acceptance criteria and edge cases.
+- [ ] **Architecture & Backend (`role-software-architect`, `role-backend-developer`)**: Respects module boundaries, runtime Zod validation, and backward-compatible migrations.
+- [ ] **UI Craft & Mobile Ergonomics (`role-ui-ux-designer`, `design-engineering`)**: Implements all 8 UI states, `>= 48x48px` tap targets, `tabular-nums`, and Penpot tokens at `390px` width.
+- [ ] **Security & Legal (`role-security-consultant`, `role-legal-counsel`)**: Authz enforced, zero XSS/SQLi, PII scrubbed from logs, GDPR/source citations verified.
+- [ ] **Performance & SEO (`role-performance-consultant`, `role-seo-geo-specialist`)**: Core Web Vitals protected, canonical/JSON-LD/OG metadata valid.
+- [ ] **QA & Accessibility (`role-qa-engineer`)**: Unit, Integration, and Playwright E2E + `axe-core` WCAG 2.2 AA checks pass with zero `waitForTimeout`.
+- [ ] **Living Documentation (`role-archivist`)**: `/docs/` (ADRs, domain models, API contracts) updated in this PR.
+```
+
+---
+
+## 3. End-to-End Issue, Branch & PR Execution Workflow
+
+### Step 1: Triage & Issue Creation
+Always search existing issues before creating a new one to prevent duplicates:
+```bash
+gh issue list --state all --search "search keyword"
+
+# Create a well-structured vertical feature issue
 gh issue create \
-  --title "feat(geo): implement location reverse geocoding" \
-  --body "### Problem Statement\n...\n### Acceptance Criteria\n- [ ] 48px touch targets\n- [ ] Offline fallback" \
-  --label "type: feat,area: ui"
+  --title "feat(search): implement postal-code and radius directory filter" \
+  --label "type: feat,priority: p1-high" \
+  --milestone "M2: Core MVP" \
+  --body-file .scratch/issue-body.md
 ```
+*(Tip: Use `--body-file` instead of inline `--body` strings containing complex markdown/backticks to avoid PowerShell/Bash escaping corruption.)*
 
-### C. Branch & PR Lifecycle
-1. **Create branch from issue**:
-   ```bash
-   git checkout -b feat/location-lookup
-   ```
-2. **Work and commit**:
-   ```bash
-   git commit -m "feat(geo): add reverse geocoding service
+### Step 2: Feature Branch & Atomic Commits
+```bash
+git checkout main
+git pull --ff-only origin main
+git checkout -b feat/14-postal-code-radius-filter
+```
+- Commit using Conventional Commits (`feat(search): ...`) referencing the issue (`Refs #14` or `Closes #14`), with **zero AI co-author trailers**.
 
-   - Add location detection action
-   - Integrate geocoding API endpoint
-   - Handle permissions denial gracefully
+### Step 3: PR Creation, CI Verification & Clean Squash Merge
+```bash
+# Push branch and create PR using a body file
+git push -u origin feat/14-postal-code-radius-filter
+gh pr create \
+  --base main \
+  --title "feat(search): implement postal-code and radius directory filter" \
+  --body-file .scratch/pr-body.md
 
-   Closes #12"
-   ```
-3. **Open Pull Request**:
-   ```bash
-   gh pr create \
-     --title "feat(geo): add reverse geocoding service" \
-     --body "Closes #12\n\n### Summary\n- Adds location lookup and error boundaries..." \
-     --base main
-   ```
-4. **Review & Merge PR**:
-   ```bash
-   # Check CI status on PR
-   gh pr checks
+# Wait for CI status checks and inspect results
+gh pr checks --watch
 
-   # Merge using Squash & Merge (keeps main linear and clean)
-   gh pr merge --squash --delete-branch
-   ```
+# Squash and merge once all checks and 360-degree review pass, then clean up branch
+gh pr merge --squash --delete-branch
+```
 
 ---
 
-## 3. GitHub Projects (v2) Automation
-- When an issue is created, link it to the project board:
-  ```bash
-  gh project item-create <project-number> --owner <org-or-user> --title "Task title"
-  ```
-- Update status field: `Backlog` -> `Ready for Dev` -> `In Progress` -> `In Review` -> `Done`.
+## 4. GitHub Projects (v2) Board Synchronization
+
+Keep the Kanban board (`Backlog` -> `Ready for Dev` -> `In Progress` -> `In Review` -> `Done`) synchronized with active work:
+```bash
+# Add newly created issue to the GitHub Project v2 board
+gh project item-add <PROJECT_NUMBER> --owner <OWNER> --url <ISSUE_URL>
+
+# List project items and their field IDs
+gh project item-list <PROJECT_NUMBER> --owner <OWNER> --format json
+```
+
+---
+
+## Mandatory GitHub Admin Checklist
+
+- [ ] **Zero Duplicate Issues**: Checked `gh issue list` before creating new issues.
+- [ ] **Clean Markdown Bodies**: Used `--body-file` for multi-line issue and PR descriptions so markdown formatting and code blocks are never mangled by shell quoting.
+- [ ] **Issue Traceability**: Every branch (`feat/<issue-id>-<slug>`) and PR (`Closes #<issue-id>`) links directly to a tracked GitHub Issue.
+- [ ] **CI & Review Gate**: Never merge a PR with failing CI checks or unresolved `[blocking]` review comments.
+- [ ] **Zero Unsolicited AI Attribution (Rule F)**: Verified commit history (`git log`) and PR descriptions contain zero `Co-authored-by:` bot lines.
+
+---
+
+## Continuous Evolution & Self-Improvement Mandate
+- **Baseline Floor, Not a Ceiling**: Treat these workflows as the baseline repository hygiene floor. Proactively automate repetitive triage, label assignment, and release drafting via GitHub Actions workflows where helpful.
+- **Knowledge Capture**: Record project-specific project board IDs, branch rulesets, and release workflows in `<workspace>/.agents/extensions/role-github-admin.md`, and upstream universal `gh` automation patterns into this skill.

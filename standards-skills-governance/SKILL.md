@@ -1,154 +1,162 @@
-﻿---
+---
 name: standards-skills-governance
 description: >-
-  Enforces the core architectural and authorship governance rules governing how Project Lifecycle Skills are authored, extended, and consumed: project-agnosticism, technology helper files, project extension protocol, documentation cross-linking, and English-only content.
+  Enforces the core architectural and authorship governance rules governing how Project Lifecycle Skills are authored, extended, and consumed: project-agnosticism, technology helper files, project extension protocol, documentation cross-linking, English-only content, AI authorship attribution, and tool version recording with continuous knowledge evolution.
 ---
 
 # Skills Governance Standards (`standards-skills-governance`)
 
 ## Mission
-Preserve the integrity, reusability, and longevity of the shared **Project Lifecycle Skills** pack by enforcing five non-negotiable hard rules. These rules must be applied by any agent or contributor who authors, edits, or extends any skill file.
+Preserve the integrity, reusability, and longevity of the shared **Project Lifecycle Skills** pack by enforcing seven non-negotiable hard rules. These rules must be applied by any agent or contributor who authors, edits, consumes, or extends any skill file.
 
 > [!IMPORTANT]
 > These rules are **non-negotiable**. Any violation found during a review must be flagged as a blocking issue and corrected before merging or archiving.
 
 ---
 
-## Rule A  -  Project-Agnostic Mandate & Multi-Domain Examples
+## Rule A — Project-Agnostic Mandate & Multi-Domain Examples
 
-**All skill files must be project-agnostic.**
+**All base skill files must be 100% project-agnostic.**
 
-- Skills describe **how** to do something (process, technique, standard), never **what** specific single project is being built.
-- Prohibited in any skill file: hardcoding single-project assumptions, hardcoding dedicated live URLs, or coupling logic to one bespoke platform.
-- **Domain Examples Policy**: Illustrative domain terms (e.g. elections, healthcare, e-commerce, real estate, finance) are allowed **only as examples**. Whenever domain-specific terminology is used in an example, provide multi-domain alternatives alongside it to preserve universality.
-- If comprehensive content is specific to one active implementation, it belongs exclusively in the project's extension files (see Rule C) or in `/docs/`.
+- Skills describe **how** to execute processes, apply architectural patterns, and enforce quality standards — never **what** single bespoke project is being built.
+- **Strictly Prohibited in Base Skills**: Hardcoding single-project assumptions, project codenames, single-project live URLs, bespoke single-application database schemas, or single-domain business rules as universal requirements.
+- **Multi-Domain Examples Policy**: Illustrative domain terms are permitted **only as concrete examples** and must always pair multiple diverse domains alongside each other (e.g., E-commerce, Healthcare, FinTech, Civic/GovTech, B2B SaaS, Real Estate) to preserve universality.
+- Content specific to one active project belongs exclusively in the target project's extension files (`.agents/extensions/<skill-name>.md`, see Rule C) or in `<workspace>/docs/` (see Rule D).
 
 ### Illustrative Examples Across Multiple Domains
-```md
-# Search / Geotargeting Examples:
-- Civic / Elections: "Representatives near [postal code]"
-- Healthcare: "Clinics near [city]"
-- Real Estate: "Properties near [neighborhood]"
+```markdown
+# Search & Geotargeting Examples:
+- Civic / GovTech: "Polling stations or representatives near [postal code]"
+- Healthcare: "Urgent care clinics accepting [insurance] near [city]"
+- E-commerce / Retail: "In-stock fulfillment pickup lockers near [neighborhood]"
+- Real Estate: "Commercial properties for lease within [district]"
 
 # XML Sitemap Partition Examples:
-- Civic: `sitemap-profiles.xml`, `sitemap-districts.xml`
-- Medical: `sitemap-doctors.xml`, `sitemap-clinics.xml`
-- E-commerce: `sitemap-products.xml`, `sitemap-categories.xml`
+- E-commerce: `sitemap-products.xml`, `sitemap-categories.xml`, `sitemap-brands.xml`
+- Healthcare: `sitemap-practitioners.xml`, `sitemap-clinics.xml`, `sitemap-specialties.xml`
+- Civic / Directory: `sitemap-profiles.xml`, `sitemap-regions.xml`, `sitemap-organizations.xml`
+- B2B SaaS: `sitemap-integrations.xml`, `sitemap-templates.xml`, `sitemap-docs.xml`
 ```
 
 ---
-## Rule B  -  Technology Best Practices as Helper Files
 
-**Technology-specific knowledge lives in named helper files within the skill's subdirectory, not in `SKILL.md` itself.**
+## Rule B — Technology Best Practices as Helper Files
 
-- Each skill may contain a `frameworks/` or `references/` subdirectory.
-- Each framework or tool gets its own named `.md` file:
-  ```
+**Technology-specific and deep-dive domain checklists live in named helper files within the skill's subdirectory (`frameworks/` or `references/`), not bloated directly inside `SKILL.md`.**
+
+- Each skill directory may contain `frameworks/` or `references/` subdirectories:
+  ```text
   role-frontend-developer/
-    SKILL.md                  <- role definition (framework-agnostic)
+    SKILL.md                                       <- Role mission, core principles, activation & helper index
     frameworks/
-      react.md                <- React/Next.js best practices
-      angular.md              <- Angular best practices
-      vue.md                  <- Vue/Nuxt best practices
+      react.md                                     <- React 19.x / Next.js 15.x implementation rules
+      angular.md                                   <- Angular 19.x / 18.x Signals & Standalone rules
+      vue.md                                       <- Vue 3.5+ / Nuxt 3.14+ rules
+  role-qa-engineer/
+    SKILL.md                                       <- QA role definition & workflow
+    references/
+      testing-pyramid-playwright-checklist.md      <- Playwright 1.49+, Vitest 2.x, axe-core 4.10+ checklist
   ```
-- `SKILL.md` states which helper files exist and when to load them.
-- Helper files may be framework-specific, library-specific, or tool-specific (e.g. `role-backend-developer/references/payload-cms.md`).
-- This ensures `SKILL.md` stays readable and stable while technology details evolve independently.
+- `SKILL.md` defines the Senior/Staff role mission, core architectural principles, activation protocol, and an explicit directory table stating **when to load each helper file**.
+- This keeps `SKILL.md` scannable and token-efficient while allowing deep, actionable checklists in helper files to evolve independently.
 
 ---
 
-## Rule C  -  Project Extension Without Modification
+## Rule C — Project Extension Protocol (Zero Modification of Base Skills)
 
-**Projects extend skills without modifying the base skill files.**
+**Target projects consume and customize skills without modifying base skill files.**
 
-- The base skill pack (installed at the agent's config location) must never be edited to accommodate a single project's needs.
-- Projects create extension files in their workspace under:
-  ```
+- The base skill repository must never be edited to hardcode a single project's bespoke conventions.
+- Target projects create delta extension files in their own workspace under:
+  ```text
   <workspace>/
     .agents/
       extensions/
-        role-frontend-developer.md    <- project-specific overrides & additions
-        role-legal-counsel.md         <- project-specific legal domain rules
-        role-seo-geo-specialist.md    <- project-specific sitemaps, GEO hierarchy
-        standards-git-and-releases.md <- project-specific commit scopes
+        role-frontend-developer.md          <- Project-specific UI stack & component overrides
+        role-legal-counsel.md               <- Project-specific regulatory statutes & jurisdictions
+        role-seo-geo-specialist.md          <- Project-specific sitemap partitions & Schema.org entities
+        standards-git-and-releases.md       <- Project-specific commit scopes & release branches
   ```
-- **Naming convention**: `<skill-name>.md` inside `.agents/extensions/`.
-- When a skill is activated, it **must** check for a corresponding extension file in `.agents/extensions/` and merge its rules on top of the base skill defaults.
-- Extension files may:
-  - Override defaults (e.g. URL slug conventions, code style rules).
-  - Add new rules for tools not yet defined in the base skill.
-  - Suppress or replace base examples with project-relevant ones.
-- Extension files must **not** duplicate base skill content  -  only delta rules.
+- **Activation Protocol**: Whenever an agent activates any skill, it **must** check whether `<workspace>/.agents/extensions/<skill-name>.md` exists. If present, its overrides and additions take precedence over base skill defaults.
+- Extension files must contain **only delta rules** (Project Context, Overrides, Additions) and never copy-paste base skill content.
 
 ### Extension File Template
-```md
-# [Skill Name]  -  Project Extension
+```markdown
+# <Skill Name> — Project Extension
 
 ## Project Context
-<!-- Brief description of the project domain. -->
+<!-- Brief summary of the project domain, target users, and regulatory/technical environment. -->
 
 ## Overrides
-<!-- Rules that replace base skill defaults for this project. -->
+<!-- Rules that replace specific base skill defaults for this repository (e.g., custom breakpoints, custom URL slugs, specific ORM choice). -->
 
 ## Additions
-<!-- New rules, tool configs, or conventions not in the base skill. -->
+<!-- Domain-specific invariants, bespoke checklists, or third-party integrations unique to this project. -->
 ```
 
 ---
 
-## Rule D  -  Documentation Cross-Linking
+## Rule D — Documentation Cross-Linking & Hard Drive Persistence
 
-**Skills read project documentation for context; documentation marks which skills it involves.**
+**Skills read `<workspace>/docs/` for context; project documentation declares governing skills in YAML frontmatter.**
 
-- Skills, when activated, should check for relevant `.md` files in `<workspace>/docs/` to gain project context.
-- Project documentation files that describe processes involving specific skills should declare which skills they are relevant to using a YAML frontmatter tag:
+- **Hard Drive Persistence Mandate**: No architectural specification, ADR, domain model, threat model, spike benchmark, or audit report may remain solely in ephemeral chat context or scratchpads. All project knowledge must be persisted to `<workspace>/docs/`.
+- Project documentation files in `<workspace>/docs/` must declare which skills govern or consume them via YAML frontmatter:
   ```yaml
   ---
-  skills: [role-archivist, role-backend-developer, role-legal-counsel]
+  title: "Authentication & Session Architecture"
+  status: "Accepted"
+  updated: "2026-11-02"
+  skills: [role-software-architect, role-backend-developer, role-security-consultant]
   ---
   ```
-- Skills should scan for docs bearing their own name in the `skills` frontmatter list and use that content to inform their decisions.
-- This enables bidirectional traceability: skills know which docs apply to them; docs declare which skills are responsible for implementing or auditing them.
-- The `role-archivist` skill is responsible for maintaining this cross-linking discipline across all `/docs/` files.
+- When activated, skills scan `<workspace>/docs/` for documents listing their skill name in `skills:` frontmatter (and related domain folders such as `/docs/adr/`, `/docs/domain/`, `/docs/architecture/`) to align implementation with established decisions.
+- `role-archivist` enforces bidirectional traceability across all `/docs/` files on every Pull Request.
 
 ---
 
-## Rule E  -  English-Only in Skills
+## Rule E — 100% English-Only in Base Skills
 
-**All content in the skill pack must be written in English.**
+**All content in the base skill repository must be written in clean, standard English.**
 
-- Every `.md` file in the base skill pack must be 100% English: instructions, examples, comments, frontmatter, placeholder text, and URLs.
-- **Project-level files** (in the project workspace) may contain native-language content **only** for user-facing text:
-  - UI copy, labels, and error messages targeted at end users.
-  - URL slugs that the user wants in their native language (e.g. `/polityka-prywatnosci` instead of `/privacy-policy`).
-  - i18n translation files.
-- When a skill provides a default English example (e.g. `/privacy-policy`), the project extension file may override it with a localized version. The base skill always uses the English default.
-
-### Enforcement
-Any agent reviewing a skill file or extension file must verify:
-- [ ] All prose, headings, and code comments are in English.
-- [ ] No project-specific words in languages other than English appear in base skill files.
-- [ ] Native language content in project files is limited to user-facing strings only.
+- Every `.md` file, code snippet, comment, frontmatter description, and checklist in the base skill pack must be 100% English.
+- **Formatting Hygiene**: Files must never contain corrupted encoding artifacts (such as box-drawing characters `├──` replacing standard spaces) or broken markdown tables.
+- **Project-Level Localization**: Native-language strings belong exclusively in the target project workspace (e.g., `i18n/` dictionaries, user-facing copy, and localized URL slugs defined in `.agents/extensions/`).
 
 ---
 
-## Rule F  -  AI Agent Authorship & Attribution Policy
+## Rule F — AI Agent Authorship & Attribution Policy
 
-**AI Agents must never add themselves as commit authors or co-authors (`Co-authored-by:`) unless the user explicitly requests it.**
+**AI agents must NEVER inject themselves as commit authors or co-authors (`Co-authored-by:`) unless explicitly instructed by the user.**
 
-- **Default Behavior**: AI agents commit strictly under the developer/user's configured identity without injecting agent names, bot emails, or tool attribution tags.
-- **One-Time Project Inception Protocol**: When initializing a brand-new repository (e.g. creating the first commit during project setup), the agent is permitted to ask the user once whether they prefer AI co-authorship attribution in commits.
-- If the user declines, does not answer, or in all subsequent operations, no AI co-authorship metadata may be included.
+- **Default Behavior**: All git commits, pull requests, and release tags must use the developer's configured Git identity (`git config user.name` and `git config user.email`) with zero AI attribution trailers, bot emails, or `"Generated by..."` footers.
+- **One-Time Project Inception Option**: When initializing a brand-new repository (`init-project`), the agent may ask the user once whether they want AI co-authorship attribution enabled. If declined or unprompted, never include AI attribution.
 
 ---
 
-## Governance Checklist (Apply on Every Skill Edit)
+## Rule G — Tool Version Recording & Continuous Knowledge Evolution
 
-Before committing or archiving any change to the skill pack, verify:
+**All helper files and checklists must record their baseline tool/framework versions, and agents must treat checklists as a living floor — never a static ceiling.**
 
-- [ ] **Rule A**: Base skills remain project-agnostic; any domain-specific terms are strictly illustrative and balanced across multiple industries.
-- [ ] **Rule B**: Technology-specific details are in `frameworks/` or `references/` helper files, not in `SKILL.md`.
-- [ ] **Rule C**: No project customization is embedded in the base skill  -  project extension files are used instead.
-- [ ] **Rule D**: Any new skill references which project docs it expects; any new project doc declares relevant skills in frontmatter.
-- [ ] **Rule E**: All content is in English; native language restricted to project-level user-facing strings.
-- [ ] **Rule F**: AI agents never add themselves as co-authors unless explicitly requested by the user.
+1. **Explicit Tooling & Standard Version Baseline**:
+   - Every helper file in `references/` or `frameworks/` (and technical checklists in `SKILL.md`) must explicitly declare the baseline versions of frameworks, libraries, and standards used to establish its rules (e.g., `Playwright 1.49+`, `Vitest 2.x`, `WCAG 2.2 AA`, `OWASP Top 10:2021`, `Schema.org v28+`, `GDPR EU 2016/679`, `Tailwind CSS 4.0`).
+   - When a target project uses a newer or older major version (verified via `package.json`, lockfiles, or ADRs), the agent must account for version deltas and record project-specific version constraints in `.agents/extensions/<skill-name>.md`.
+
+2. **Checklists Are a Baseline Floor, Not a Ceiling**:
+   - Pre-defined checklists represent the minimum Senior/Staff engineering bar. Agents must **not** mechanically stop thinking once boxes are ticked; they must proactively analyze architectural edge cases, runtime failure modes, and domain-specific risks beyond the checklist.
+
+3. **Continuous Knowledge Capture Loop**:
+   - **Project-Specific Learnings**: When a novel bug, domain edge case, or framework quirk is discovered during implementation or code review, capture it immediately in `<workspace>/.agents/extensions/<skill-name>.md` or `<workspace>/docs/adr/` so the mistake is never repeated in that project.
+   - **Universal Reusable Patterns**: When a newly discovered pattern, anti-pattern, or tool upgrade is 100% project-agnostic and universally valuable across industries, propose or codify it into the appropriate base skill helper file (`references/` or `frameworks/`) with updated version metadata.
+
+---
+
+## Governance Audit Checklist (Verify on Every Skill Edit)
+
+- [ ] **Rule A (Project-Agnostic)**: Zero single-project assumptions or hardcoded bespoke schemas; concrete examples span multiple industries (E-commerce, Healthcare, FinTech, Civic, SaaS).
+- [ ] **Rule B (Helper Modularity)**: Deep framework/tool guides and exhaustive checklists are organized in `frameworks/` or `references/` and indexed in `SKILL.md`.
+- [ ] **Rule C (Extension Protocol)**: Base skill includes activation instructions checking `.agents/extensions/<skill-name>.md`.
+- [ ] **Rule D (Docs Cross-Linking)**: Base skill instructs checking `<workspace>/docs/` frontmatter (`skills: [...]`) and persisting artifacts to disk.
+- [ ] **Rule E (English & Formatting)**: 100% English prose and comments; zero corrupted whitespace characters or broken Markdown.
+- [ ] **Rule F (Zero Unsolicited AI Attribution)**: No `Co-authored-by:` bot trailers in commit guidelines or templates.
+- [ ] **Rule G (Version Baseline & Evolution)**: Exact tool/standard versions are recorded at the top of helper checklists, and the Continuous Evolution Mandate is included.

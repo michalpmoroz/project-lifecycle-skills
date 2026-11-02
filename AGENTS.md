@@ -44,6 +44,12 @@ All skills in this repository are governed by the standards codified in [`standa
 - Commits must use the user's configured identity (`git config user.name` / `git config user.email`).
 - Do not append AI attribution signatures, bot emails, or assistant branding to commit messages.
 
+### Rule G: Tool Version Recording & Continuous Knowledge Evolution
+- Every helper file in `frameworks/` and `references/` must explicitly record the baseline versions of the tools, frameworks, languages, and standards used to establish its rules and checklists.
+- Checklists represent a **minimum quality floor, never a ceiling**. Agents must not be constrained by static lists; they must continuously reason from first principles and expand knowledge while working:
+  - **Project-Specific Learnings**: Persist immediately to `<project-root>/.agents/extensions/<skill-name>.md` or `<project-root>/docs/`.
+  - **Universal / Project-Agnostic Learnings**: Promote reusable, multi-domain patterns and newly discovered anti-patterns back into the shared `project-lifecycle-skills` repository.
+
 ---
 
 ## 2. Hard Drive Persistence Mandate
@@ -107,8 +113,9 @@ Whenever recommending, selecting, or provisioning tools, libraries, infrastructu
 ## 6. Repository Maintenance Checklist for Agents
 
 When editing or submitting changes to this repository:
-- [ ] Confirm no single-project logic is introduced into base skills.
-- [ ] Ensure all helper scripts or framework-specific guides are placed under `<skill>/frameworks/` or `<skill>/references/`.
-- [ ] Ensure all new files are in standard English.
-- [ ] Verify that Git commits follow Conventional Commits format (`feat:`, `fix:`, `docs:`, `chore:`).
-- [ ] Ensure **zero** AI co-authorship tags (`Co-authored-by:`) are inserted into commit messages.
+- [ ] Confirm no single-project logic is introduced into base skills (Rule A).
+- [ ] Ensure all helper scripts or framework-specific guides are placed under `<skill>/frameworks/` or `<skill>/references/` for selective context loading (Rule B).
+- [ ] Confirm project-specific overrides live in `<project-root>/.agents/extensions/<skill-name>.md` (Rule C) and `/docs/` frontmatter cross-links are respected (Rule D).
+- [ ] Ensure all new files are in standard English (Rule E).
+- [ ] Verify that Git commits follow Conventional Commits format (`feat:`, `fix:`, `docs:`, `chore:`) and contain **zero** AI co-authorship tags (`Co-authored-by:`) (Rule F).
+- [ ] Confirm all `frameworks/` and `references/` files record baseline tool/framework versions and enforce the Continuous Knowledge Evolution mandate (Rule G).
